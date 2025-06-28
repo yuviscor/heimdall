@@ -24,7 +24,7 @@
 ## ✨ Features
 
 - **🔄 Continuous Monitoring**: Real-time health checks with configurable intervals
-- **📱 Telegram Notifications**: Instant alerts via Telegram bot when services go down
+- **📱 Multi-Platform Notifications**: Instant alerts via Telegram, Discord, and other social platforms
 - **⚡ High Performance**: Lightweight Go implementation with minimal resource usage
 - **🎯 Flexible Configuration**: Support for both strict and lenient health checks
 - **🚀 Zero Dependencies**: No external dependencies - only Go standard library
@@ -34,7 +34,8 @@
 ### Prerequisites
 
 - Go 1.24.2 or higher
-- Telegram Bot Token (for notifications)
+- Telegram Bot Token (for Telegram notifications)
+- Discord Webhook URL (for Discord notifications)
 
 ### Installation
 
@@ -58,7 +59,7 @@
    cp config.example.json config.json
    ```
 
-4. **Configure your services and Telegram bot**
+4. **Configure your services and notifiers**
    ```json
    {
      "services": [
@@ -69,9 +70,16 @@
          "strict": true
        }
      ],
-     "telegram": {
-       "chatId": "YOUR_CHAT_ID",
-       "botToken": "YOUR_BOT_TOKEN"
+     "notifiers": {
+       "telegram": {
+         "chatId": "YOUR_CHAT_ID",
+         "botToken": "YOUR_BOT_TOKEN",
+         "enabled": true
+       },
+       "discord": {
+         "webhook": "YOUR_DISCORD_WEBHOOK_URL",
+         "enabled": false
+       }
      }
    }
    ```
@@ -97,7 +105,24 @@ Each service in the `services` array supports the following parameters:
 | `url` | string | ✅ | Service URL to monitor | `"https://api.example.com"` |
 | `interval` | string | ✅ | Check interval (supports Go duration or milliseconds) | `"30s"`, `"1m"`, `"30000"` |
 | `strict` | boolean | ❌ | Strict mode (only 200 OK considered healthy) | `true` |
-| `timeout` | integer | ❌ | Request timeout in milliseconds | `5000` |
+| `timeout` | integer | ❌ | Request timeout in milliseconds | `600` |
+
+### Notifiers Configuration
+
+#### Telegram Notifier
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `chatId` | string | ✅ | Telegram chat ID where notifications will be sent |
+| `botToken` | string | ✅ | Telegram bot token from @BotFather |
+| `enabled` | boolean | ❌ | Enable/disable Telegram notifications (default: `true`) |
+
+#### Discord Notifier
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `webhook` | string | ✅ | Discord webhook URL for the channel |
+| `enabled` | boolean | ❌ | Enable/disable Discord notifications (default: `true`) |
 
 ### Health Check Modes
 
@@ -127,7 +152,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Named after Heimdall, the Norse god who watches over the Bifröst bridge
 - Built with Go for performance and reliability
-- Telegram Bot API for instant notifications
+- Telegram Bot API and Discord Webhooks for instant notifications
 
 ---
 

@@ -22,13 +22,23 @@ func main() {
 		log.Fatal(err)
 	}
 
-	telegramNotifier := notifier.NewTelegramNotifier(
-		cfg.Telegram.ChatID,
-		cfg.Telegram.BotToken,
-	)
+	notifierManager := notifier.NewNotifierManager()
+
+	if cfg.IsTelegramEnabled() {
+		notifierManager.AddService(notifier.NewTelegramNotifier(
+			cfg.Notifiers.Telegram.ChatID,
+			cfg.Notifiers.Telegram.BotToken,
+		))
+	}
+
+	if cfg.IsDiscordEnabled() {
+		notifierManager.AddService(notifier.NewDiscordNotifier(
+			cfg.Notifiers.Discord.Webhook,
+		))
+	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	serviceChecker := checker.NewServiceChecker(telegramNotifier, cfg.Services)
+	serviceChecker := checker.NewServiceChecker(notifierManager, cfg.Services)
 	serviceChecker.Start(ctx)
 
 	log.Println("[INFO]: heimdall service status checker was started")

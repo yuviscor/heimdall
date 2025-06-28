@@ -20,8 +20,15 @@
             "timeout": 600
         }
     ],
-    "telegram": {
-        "chatId": "",
-        "botToken": ""
+    "notifiers": {
+        "telegram": {
+            "chatId": "",
+            "botToken": "",
+            "enabled": true
+        },
+        "discord": {
+            "webhook": "",
+            "enabled": true
+        }
     }
 }

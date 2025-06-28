@@ -3,10 +3,8 @@ package notifier
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 
@@ -28,7 +26,7 @@ func NewTelegramNotifier(chatId string, botToken string) *TelegramNotifier {
 func (n *TelegramNotifier) Notify(serviceErr *domain.ServiceError) error {
 	sb := strings.Builder{}
 
-	sb.WriteString("🚨 *Service Alert* 🚨\n\n")
+	sb.WriteString("🚨 <b>Service Alert</b> 🚨\n\n")
 	sb.WriteString(fmt.Sprintf("🔧 Service: %s\n", serviceErr.Name))
 
 	if serviceErr.StatusCode != 0 {
@@ -50,7 +48,7 @@ func (n *TelegramNotifier) Notify(serviceErr *domain.ServiceError) error {
 	}{
 		ChatID:    n.ChatID,
 		Text:      sb.String(),
-		ParseMode: "MarkdownV2",
+		ParseMode: "HTML",
 	}
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {
@@ -69,8 +67,7 @@ func (n *TelegramNotifier) Notify(serviceErr *domain.ServiceError) error {
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		respBody, _ := io.ReadAll(resp.Body)
-		log.Println(string(respBody))
-		return errors.New("error when sending message")
+		return fmt.Errorf("error when sending message to telegram: %s", respBody)
 	}
 
 	return nil

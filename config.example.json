@@ -1,0 +1,27 @@
+{
+    "services": [
+        {
+            "name": "name of service",
+            "url": "https://strict.url",
+            "interval": "1m",
+            "strict": true
+        },
+        {
+            "name": "name of service",
+            "url": "https://no-strict.url",
+            "interval": "1h",
+            "strict": false
+        },
+        {
+            "name": "name of service with timeout",
+            "url": "https://timeout.url",
+            "interval": "60000",
+            "strict": false,
+            "timeout": 600
+        }
+    ],
+    "telegram": {
+        "chatId": "",
+        "botToken": ""
+    }
+}

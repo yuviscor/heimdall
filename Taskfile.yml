@@ -1,0 +1,40 @@
+version: "3"
+
+dotenv: ['.env']
+
+vars:
+  EXT: '{{if eq OS "windows"}}.exe{{end}}'
+
+tasks:
+  dev:
+    cmds:
+      - go run cmd/heimdall/main.go --config ./config.json
+
+  build:
+    cmds:
+      - go build -o bin/heimdall{{.EXT}} -ldflags="-s -w" -gcflags=all="-l -B" ./cmd/heimdall/main.go
+
+  run:
+    cmds:
+      - ./bin/heimdall{{.EXT}} --config ./config.json
+
+  release:
+    cmds:
+      - goreleaser release --clean
+
+  lint:
+    cmds:
+      - golangci-lint run
+
+  lint-fix:
+    cmds:
+      - golangci-lint run --fix
+
+  clean:
+    cmds:
+      - |
+        {{if eq OS "windows"}}
+          cmd /c "if exist bin\heimdall{{.EXT}} del bin\heimdall{{.EXT}}"
+        {{else}}
+          rm -f bin/heimdall{{.EXT}}
+        {{end}}

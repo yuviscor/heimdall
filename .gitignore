@@ -1,0 +1,6 @@
+config.json
+.env
+bin/
+dist/
+todo
+IDEAS.md

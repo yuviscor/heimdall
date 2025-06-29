@@ -44,6 +44,12 @@ func main() {
 		))
 	}
 
+	if cfg.IsWebhookEnabled() {
+		notifierManager.AddService(notifier.NewWebhookNotifier(
+			cfg.Notifiers.Webhook.Webhook,
+		))
+	}
+
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	serviceChecker := checker.NewServiceChecker(notifierManager, cfg.Services)
 	serviceChecker.Start(ctx)

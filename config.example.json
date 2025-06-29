@@ -38,6 +38,10 @@
             "chatId": "",
             "botToken": "",
             "enabled": true
+        },
+        "webhook": {
+            "webhook": "",
+            "enabled": true
         }
     }
 }

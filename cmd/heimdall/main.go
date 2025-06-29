@@ -37,6 +37,13 @@ func main() {
 		))
 	}
 
+	if cfg.IsSlackEnabled() {
+		notifierManager.AddService(notifier.NewSlackNotifier(
+			cfg.Notifiers.Slack.ChatID,
+			cfg.Notifiers.Slack.BotToken,
+		))
+	}
+
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	serviceChecker := checker.NewServiceChecker(notifierManager, cfg.Services)
 	serviceChecker.Start(ctx)

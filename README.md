@@ -24,7 +24,7 @@
 ## ✨ Features
 
 - **🔄 Continuous Monitoring**: Real-time health checks with configurable intervals
-- **📱 Multi-Platform Notifications**: Instant alerts via Telegram, Discord, and other social platforms
+- **📱 Multi-Platform Notifications**: Instant alerts via Telegram, Discord or Slack
 - **⚡ High Performance**: Lightweight Go implementation with minimal resource usage
 - **🎯 Flexible Configuration**: Support for both strict and lenient health checks
 - **🚀 Zero Dependencies**: No external dependencies - only Go standard library
@@ -36,6 +36,7 @@
 - Go 1.24.2 or higher
 - Telegram Bot Token (for Telegram notifications)
 - Discord Webhook URL (for Discord notifications)
+- Slack Bot Token (for Slack notifications)
 
 ### Installation
 
@@ -90,6 +91,11 @@
        "discord": {
          "webhook": "YOUR_DISCORD_WEBHOOK_URL",
          "enabled": false
+       },
+       "slack": {
+         "chatId": "YOUR_CHANNEL_ID",
+         "botToken": "YOUR_SLACK_BOT_TOKEN",
+         "enabled": true
        }
      }
    }
@@ -136,6 +142,14 @@ Each service in the `services` array supports the following parameters:
 | `webhook` | string | ✅ | Discord webhook URL for the channel |
 | `enabled` | boolean | ❌ | Enable/disable Discord notifications (default: `true`) |
 
+#### Slack Notifier
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `chatId` | string | ✅ | Slack channel ID where notifications will be sent |
+| `botToken` | string | ✅ | Slack bot token |
+| `enabled` | boolean | ❌ | Enable/disable Slack notifications (default: `true`) |
+
 ### Health Check Modes
 
 #### Strict Mode (`strict: true`)
@@ -164,7 +178,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Named after Heimdall, the Norse god who watches over the Bifröst bridge
 - Built with Go for performance and reliability
-- Telegram Bot API and Discord Webhooks for instant notifications
+- Telegram Bot API, Discord Webhooks, and Slack API for instant notifications
+- Rich message formatting with emojis, timestamps, and structured information
 
 ---
 

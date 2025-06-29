@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
+	"time"
 
 	"github.com/MowlCoder/heimdall/internal/domain"
 )
@@ -21,30 +21,106 @@ func NewDiscordNotifier(webhook string) *DiscordNotifier {
 	}
 }
 
-func (n *DiscordNotifier) Notify(serviceErr *domain.ServiceError) error {
-	sb := strings.Builder{}
+type discordEmbed struct {
+	Title       string              `json:"title"`
+	Description string              `json:"description"`
+	Color       int                 `json:"color"`
+	Fields      []discordEmbedField `json:"fields"`
+	Timestamp   string              `json:"timestamp"`
+	Footer      discordEmbedFooter  `json:"footer"`
+}
 
-	sb.WriteString("🚨 **Service Alert** 🚨\n\n")
-	sb.WriteString(fmt.Sprintf("🔧 Service: %s\n", serviceErr.Name))
+type discordEmbedField struct {
+	Name   string `json:"name"`
+	Value  string `json:"value"`
+	Inline bool   `json:"inline"`
+}
+
+type discordEmbedFooter struct {
+	Text string `json:"text"`
+}
+
+type discordWebhookPayload struct {
+	Content string         `json:"content"`
+	Embeds  []discordEmbed `json:"embeds"`
+}
+
+func (n *DiscordNotifier) Notify(serviceErr *domain.ServiceError) error {
+	currentTime := time.Now()
+
+	color := 0xFF0000
+	if serviceErr.StatusCode >= 200 && serviceErr.StatusCode < 300 {
+		color = 0x00FF00
+	} else if serviceErr.StatusCode >= 300 && serviceErr.StatusCode < 400 {
+		color = 0xFFFF00
+	} else if serviceErr.StatusCode >= 400 && serviceErr.StatusCode < 500 {
+		color = 0xFFA500
+	}
+
+	fields := []discordEmbedField{
+		{
+			Name:   "🔧 Service Name",
+			Value:  fmt.Sprintf("`%s`", serviceErr.Name),
+			Inline: true,
+		},
+	}
 
 	if serviceErr.StatusCode != 0 {
-		sb.WriteString(fmt.Sprintf("📊 Status Code: %d\n", serviceErr.StatusCode))
+		statusText := getStatusText(serviceErr.StatusCode)
+		fields = append(fields, discordEmbedField{
+			Name:   "📊 HTTP Status",
+			Value:  fmt.Sprintf("`%d (%s)`", serviceErr.StatusCode, statusText),
+			Inline: true,
+		})
+	}
+
+	fields = append(fields, discordEmbedField{
+		Name:   "⏰ Timestamp",
+		Value:  fmt.Sprintf("<t:%d:F>", currentTime.Unix()),
+		Inline: true,
+	})
+
+	if serviceErr.Error != nil {
+		errorDetails := fmt.Sprintf("%v", serviceErr.Error)
+		if len(errorDetails) > 1024 {
+			errorDetails = errorDetails[:1021] + "..."
+		}
+		fields = append(fields, discordEmbedField{
+			Name:   "❌ Error Details",
+			Value:  fmt.Sprintf("```%s```", errorDetails),
+			Inline: false,
+		})
 	}
 
 	if len(serviceErr.Body) > 0 {
-		sb.WriteString(fmt.Sprintf("📄 Response body: %s\n", serviceErr.Body))
+		bodyPreview := string(serviceErr.Body)
+		if len(bodyPreview) > 1024 {
+			bodyPreview = bodyPreview[:1021] + "..."
+		}
+		fields = append(fields, discordEmbedField{
+			Name:   "📄 Response Body",
+			Value:  fmt.Sprintf("```%s```", bodyPreview),
+			Inline: false,
+		})
 	}
 
-	if serviceErr.Error != nil {
-		sb.WriteString(fmt.Sprintf("❌ Error: %v\n", serviceErr.Error))
+	embed := discordEmbed{
+		Title:       "🚨 SERVICE ALERT 🚨",
+		Description: "A service monitoring alert has been triggered",
+		Color:       color,
+		Fields:      fields,
+		Timestamp:   currentTime.Format(time.RFC3339),
+		Footer: discordEmbedFooter{
+			Text: "Heimdall Monitoring System",
+		},
 	}
 
-	body := struct {
-		Content string `json:"content"`
-	}{
-		Content: sb.String(),
+	payload := discordWebhookPayload{
+		Content: "🔔 **Service Alert Detected**",
+		Embeds:  []discordEmbed{embed},
 	}
-	bodyBytes, err := json.Marshal(body)
+
+	bodyBytes, err := json.Marshal(payload)
 	if err != nil {
 		return err
 	}

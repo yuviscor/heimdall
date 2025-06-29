@@ -33,6 +33,11 @@
         "discord": {
             "webhook": "",
             "enabled": true
+        },
+        "slack": {
+            "chatId": "",
+            "botToken": "",
+            "enabled": true
         }
     }
 }

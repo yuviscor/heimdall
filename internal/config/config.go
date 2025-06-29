@@ -20,6 +20,11 @@ type Config struct {
 			Webhook string `json:"webhook"`
 			Enabled bool   `json:"enabled"`
 		}
+		Slack *struct {
+			ChatID   string `json:"chatId"`
+			BotToken string `json:"botToken"`
+			Enabled  bool   `json:"enabled"`
+		}
 	} `json:"notifiers"`
 }
 
@@ -29,6 +34,10 @@ func (c Config) IsTelegramEnabled() bool {
 
 func (c Config) IsDiscordEnabled() bool {
 	return c.Notifiers.Discord != nil && c.Notifiers.Discord.Enabled
+}
+
+func (c Config) IsSlackEnabled() bool {
+	return c.Notifiers.Slack != nil && c.Notifiers.Slack.Enabled
 }
 
 func ParseConfigFromFile(path string) (*Config, error) {
@@ -42,7 +51,7 @@ func ParseConfigFromFile(path string) (*Config, error) {
 		return nil, err
 	}
 
-	if !cfg.IsTelegramEnabled() && !cfg.IsDiscordEnabled() {
+	if !cfg.IsTelegramEnabled() && !cfg.IsDiscordEnabled() && !cfg.IsSlackEnabled() {
 		return nil, errors.New("at least 1 notifier service should be enabled and configured")
 	}
 

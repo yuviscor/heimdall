@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/MowlCoder/heimdall/internal/domain"
 )
@@ -26,20 +27,39 @@ func NewTelegramNotifier(chatId string, botToken string) *TelegramNotifier {
 func (n *TelegramNotifier) Notify(serviceErr *domain.ServiceError) error {
 	sb := strings.Builder{}
 
-	sb.WriteString("🚨 <b>Service Alert</b> 🚨\n\n")
-	sb.WriteString(fmt.Sprintf("🔧 Service: %s\n", serviceErr.Name))
+	currentTime := time.Now().Format("2006-01-02 15:04:05 UTC")
+	sb.WriteString("🚨 <b>SERVICE ALERT</b> 🚨\n")
+	sb.WriteString(fmt.Sprintf("⏰ <b>Time:</b> %s\n", currentTime))
+	sb.WriteString("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n")
+
+	sb.WriteString(fmt.Sprintf("🔧 <b>Service Name:</b> <code>%s</code>\n", serviceErr.Name))
 
 	if serviceErr.StatusCode != 0 {
-		sb.WriteString(fmt.Sprintf("📊 Status Code: %d\n", serviceErr.StatusCode))
-	}
-
-	if len(serviceErr.Body) > 0 {
-		sb.WriteString(fmt.Sprintf("📄 Response body: %s\n", serviceErr.Body))
+		statusEmoji := "🔴"
+		if serviceErr.StatusCode >= 200 && serviceErr.StatusCode < 300 {
+			statusEmoji = "🟢"
+		} else if serviceErr.StatusCode >= 300 && serviceErr.StatusCode < 400 {
+			statusEmoji = "🟡"
+		} else if serviceErr.StatusCode >= 400 && serviceErr.StatusCode < 500 {
+			statusEmoji = "🟠"
+		}
+		sb.WriteString(fmt.Sprintf("%s <b>HTTP Status:</b> <code>%d (%s)</code>\n", statusEmoji, serviceErr.StatusCode, getStatusText(serviceErr.StatusCode)))
 	}
 
 	if serviceErr.Error != nil {
-		sb.WriteString(fmt.Sprintf("❌ Error: %v\n", serviceErr.Error))
+		sb.WriteString(fmt.Sprintf("❌ <b>Error Details:</b>\n<pre>%v</pre>\n", serviceErr.Error))
 	}
+
+	if len(serviceErr.Body) > 0 {
+		bodyPreview := string(serviceErr.Body)
+		if len(bodyPreview) > 200 {
+			bodyPreview = bodyPreview[:200] + "..."
+		}
+		sb.WriteString(fmt.Sprintf("📄 <b>Response Body:</b>\n<pre>%s</pre>\n", bodyPreview))
+	}
+
+	sb.WriteString("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+	sb.WriteString("🔔 <b>Heimdall Monitoring System</b>")
 
 	body := struct {
 		ChatID    string `json:"chat_id"`

@@ -24,7 +24,7 @@
 ## ✨ Features
 
 - **🔄 Continuous Monitoring**: Real-time health checks with configurable intervals
-- **📱 Multi-Platform Notifications**: Instant alerts via Telegram, Discord or Slack
+- **📱 Multi-Platform Notifications**: Instant alerts via Telegram, Discord, Slack, or custom webhook
 - **⚡ High Performance**: Lightweight Go implementation with minimal resource usage
 - **🎯 Flexible Configuration**: Support for both strict and lenient health checks
 - **🚀 Zero Dependencies**: No external dependencies - only Go standard library
@@ -96,6 +96,10 @@
          "chatId": "YOUR_CHANNEL_ID",
          "botToken": "YOUR_SLACK_BOT_TOKEN",
          "enabled": true
+       },
+       "webhook": {
+         "webhook": "YOUR_CUSTOM_WEBHOOK_URL",
+         "enabled": false
        }
      }
    }
@@ -150,6 +154,23 @@ Each service in the `services` array supports the following parameters:
 | `botToken` | string | ✅ | Slack bot token |
 | `enabled` | boolean | ❌ | Enable/disable Slack notifications (default: `true`) |
 
+#### Custom Webhook Notifier
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `webhook` | string | ✅ | Custom webhook URL where notifications will be sent |
+| `enabled` | boolean | ❌ | Enable/disable custom webhook notifications (default: `true`) |
+
+**Webhook Payload Structure:**
+```json
+{
+  "name": "Service Name",
+  "statusCode": 500,
+  "body": "Error response body",
+  "error": "Error message"
+}
+```
+
 ### Health Check Modes
 
 #### Strict Mode (`strict: true`)
@@ -178,7 +199,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Named after Heimdall, the Norse god who watches over the Bifröst bridge
 - Built with Go for performance and reliability
-- Telegram Bot API, Discord Webhooks, and Slack API for instant notifications
+- Telegram Bot API, Discord Webhooks, Slack API, and custom webhooks for instant notifications
 - Rich message formatting with emojis, timestamps, and structured information
 
 ---

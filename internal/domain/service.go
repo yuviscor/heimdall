@@ -6,11 +6,11 @@ import (
 )
 
 type Service struct {
-	Name     string             `json:"name"`
-	URL      string             `json:"url"`
-	Interval string             `json:"interval"`
-	Strict   bool               `json:"strict"`
-	Timeout  int                `json:"timeout"`
+	Name     string            `json:"name"`
+	URL      string            `json:"url"`
+	Interval string            `json:"interval"`
+	Strict   bool              `json:"strict"`
+	Timeout  int               `json:"timeout"`
 	Headers  map[string]string `json:"headers"`
 }
 

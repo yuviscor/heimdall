@@ -4,7 +4,11 @@
             "name": "name of service",
             "url": "https://strict.url",
             "interval": "1m",
-            "strict": true
+            "strict": true,
+            "headers": {
+                "User-Agent": "Heimdall-Monitor/1.0",
+                "Authorization": "Bearer your-token-here"
+            }
         },
         {
             "name": "name of service",

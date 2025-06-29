@@ -67,7 +67,18 @@
          "name": "My Website",
          "url": "https://example.com",
          "interval": "30s",
-         "strict": true
+         "strict": true,
+         "headers": {
+           "User-Agent": "Heimdall-Monitor/1.0",
+           "Authorization": "Bearer your-token"
+         }
+       },
+       {
+         "name": "API Service",
+         "url": "https://api.example.com/health",
+         "interval": "1m",
+         "strict": false,
+         "timeout": 5000
        }
      ],
      "notifiers": {
@@ -106,6 +117,7 @@ Each service in the `services` array supports the following parameters:
 | `interval` | string | ✅ | Check interval (supports Go duration or milliseconds) | `"30s"`, `"1m"`, `"30000"` |
 | `strict` | boolean | ❌ | Strict mode (only 200 OK considered healthy) | `true` |
 | `timeout` | integer | ❌ | Request timeout in milliseconds | `600` |
+| `headers` | object | ❌ | Custom HTTP headers to send with requests | `{"Authorization": "Bearer token"}` |
 
 ### Notifiers Configuration
 

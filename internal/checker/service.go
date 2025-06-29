@@ -60,6 +60,10 @@ func (sc *ServiceChecker) startCheckService(ctx context.Context, service domain.
 				return
 			}
 
+			for hName, hValue := range service.Headers {
+				request.Header.Set(hName, hValue)
+			}
+
 			request = request.WithContext(ctx)
 
 			if service.Timeout > 0 {

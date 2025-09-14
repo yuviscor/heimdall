@@ -50,6 +50,9 @@
    ```bash
    # Using Task (recommended)
    task build
+
+   # Using Docker (recommended)
+   docker build . -t heimdall
    
    # Or using Go directly
    go build -o bin/heimdall ./cmd/heimdall/main.go
@@ -109,6 +112,10 @@
    ```bash
    # Using Task
    task run
+
+   # Using Docker
+   docker run -d heimdall or
+   docker run -d heimdall --config config.json
    
    # Or directly
    ./bin/heimdall --config ./config.json

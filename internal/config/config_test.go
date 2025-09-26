@@ -8,64 +8,26 @@ import (
 )
 
 func Test_Enablement_Notifiers(t *testing.T) {
-
 	cfg := &Config{
-
 		Services: []domain.Service{
-
 			{Name: "My Personal Website", URL: "https://example.com"},
 		},
-		Notifiers: struct {
-			Telegram *struct {
-				ChatID   string "json:\"chatId\""
-				BotToken string "json:\"botToken\""
-				Enabled  bool   "json:\"enabled\""
-			}
-			Discord *struct {
-				Webhook string "json:\"webhook\""
-				Enabled bool   "json:\"enabled\""
-			}
-			Slack *struct {
-				ChatID   string "json:\"chatId\""
-				BotToken string "json:\"botToken\""
-				Enabled  bool   "json:\"enabled\""
-			}
-			Webhook *struct {
-				Webhook string "json:\"webhook\""
-				Enabled bool   "json:\"enabled\""
-			}
-		}{
-
-			Telegram: &struct {
-				ChatID   string "json:\"chatId\""
-				BotToken string "json:\"botToken\""
-				Enabled  bool   "json:\"enabled\""
-			}{
-
+		Notifiers: NotifiersConfig{
+			Telegram: &TelegramNotifierConfig{
 				ChatID:   "-123456789",
 				BotToken: "secret-telegram-bot-token",
 				Enabled:  true,
 			},
-			Slack: &struct {
-				ChatID   string "json:\"chatId\""
-				BotToken string "json:\"botToken\""
-				Enabled  bool   "json:\"enabled\""
-			}{
+			Slack: &SlackNotifierConfig{
 				ChatID:   "RandomTest",
 				BotToken: "xoxosecret-slack-bot-token",
 				Enabled:  true,
 			},
-			Discord: &struct {
-				Webhook string "json:\"webhook\""
-				Enabled bool   "json:\"enabled\""
-			}{
+			Discord: &DiscordNotifierConfig{
 				Webhook: "random",
 				Enabled: true,
 			},
-			Webhook: &struct {
-				Webhook string "json:\"webhook\""
-				Enabled bool   "json:\"enabled\""
-			}{
+			Webhook: &WebhookNotifierConfig{
 				Webhook: "randomWebhook",
 				Enabled: true,
 			},

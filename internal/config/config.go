@@ -8,28 +8,16 @@ import (
 	"github.com/MowlCoder/heimdall/internal/domain"
 )
 
+type NotifiersConfig struct {
+	Telegram *TelegramNotifierConfig
+	Discord  *DiscordNotifierConfig
+	Slack    *SlackNotifierConfig
+	Webhook  *WebhookNotifierConfig
+}
+
 type Config struct {
 	Services  []domain.Service `json:"services"`
-	Notifiers struct {
-		Telegram *struct {
-			ChatID   string `json:"chatId"`
-			BotToken string `json:"botToken"`
-			Enabled  bool   `json:"enabled"`
-		}
-		Discord *struct {
-			Webhook string `json:"webhook"`
-			Enabled bool   `json:"enabled"`
-		}
-		Slack *struct {
-			ChatID   string `json:"chatId"`
-			BotToken string `json:"botToken"`
-			Enabled  bool   `json:"enabled"`
-		}
-		Webhook *struct {
-			Webhook string `json:"webhook"`
-			Enabled bool   `json:"enabled"`
-		}
-	} `json:"notifiers"`
+	Notifiers NotifiersConfig  `json:"notifiers"`
 }
 
 func (c Config) IsTelegramEnabled() bool {

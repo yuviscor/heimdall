@@ -16,25 +16,22 @@ type PrometheusCollector struct {
 }
 
 func NewPrometheusCollector() *PrometheusCollector {
-
 	return &PrometheusCollector{
-
 		RequestTotal: promauto.NewCounterVec(
 			prometheus.CounterOpts{
 				Name: "http_client_requests_total",
+				Help: "A counter for requests made by the client.",
 			},
-			[]string{"method", "code"}),
-
+			[]string{"code", "method"},
+		),
 		RequestDuration: promauto.NewHistogramVec(
-
 			prometheus.HistogramOpts{
-
-				Name: "http_client_request_duration_seconds",
+				Name:    "http_client_request_duration_seconds",
+				Help:    "A histogram of request latencies.",
+				Buckets: prometheus.DefBuckets,
 			},
 			[]string{"method"},
-		),
-	}
-
+		)}
 }
 
 func (pc *PrometheusCollector) StartServer(port string) {

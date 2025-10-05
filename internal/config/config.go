@@ -30,6 +30,11 @@ type Config struct {
 			Enabled bool   `json:"enabled"`
 		}
 	} `json:"notifiers"`
+	MetricsBackend string `json:"metricsBackend"`
+}
+
+func (c Config) GetMetricsBackend() string {
+	return c.MetricsBackend
 }
 
 func (c Config) IsTelegramEnabled() bool {

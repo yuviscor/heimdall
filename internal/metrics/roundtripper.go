@@ -8,10 +8,14 @@ import (
 
 type InstrumentedRoundTripper struct {
 	transport http.RoundTripper
-	collector MetricsColletor
+	collector MetricsCollector
 }
 
-func NewInstrumentedRoundTripper(collector MetricsColletor, transport http.RoundTripper) *InstrumentedRoundTripper {
+func NewInstrumentedRoundTripper(collector MetricsCollector, transport http.RoundTripper) *InstrumentedRoundTripper {
+
+	if transport == nil {
+		transport = http.DefaultTransport
+	}
 
 	return &InstrumentedRoundTripper{
 
@@ -41,7 +45,6 @@ func (irt *InstrumentedRoundTripper) RoundTrip(req *http.Request) (*http.Respons
 
 	irt.collector.ObserveRequestDuration(duration, MetricLabels{
 
-		"code":   code,
 		"method": method,
 	})
 

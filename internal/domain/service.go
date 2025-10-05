@@ -14,6 +14,10 @@ type Service struct {
 	Headers  map[string]string `json:"headers"`
 }
 
+type MetricsBackend struct {
+	MetricsBackend string `json:"metricsBackend"`
+}
+
 func (s Service) ParseInterval() (time.Duration, error) {
 	if intervalNumber, err := strconv.Atoi(s.Interval); err == nil {
 		return time.Duration(intervalNumber) * time.Millisecond, nil

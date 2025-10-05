@@ -4,7 +4,7 @@ import "time"
 
 type MetricLabels map[string]string
 
-type MetricsColletor interface {
+type MetricsCollector interface {
 	IncRequestsTotal(labels MetricLabels)
 
 	ObserveRequestDuration(duration time.Duration, labels MetricLabels)

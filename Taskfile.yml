@@ -1,6 +1,6 @@
 version: "3"
 
-dotenv: ['.env']
+dotenv: [".env"]
 
 vars:
   EXT: '{{if eq OS "windows"}}.exe{{end}}'
@@ -17,6 +17,10 @@ tasks:
   run:
     cmds:
       - ./bin/heimdall{{.EXT}} --config ./config.json
+
+  test:
+    cmds:
+      - go test ./...
 
   release:
     cmds:
